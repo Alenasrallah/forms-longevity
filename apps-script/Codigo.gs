@@ -11,10 +11,10 @@
 
 /* ---------- CONFIGURAÇÃO ---------- */
 
-// Deixe vazio se este script foi criado de dentro da planilha
-// (Extensões → Apps Script). Se for um script separado, cole aqui o ID
-// da planilha: o trecho entre /d/ e /edit na URL do Google Sheets.
-var ID_PLANILHA = '';
+// ID da planilha de candidaturas (o trecho entre /d/ e /edit na URL do
+// Google Sheets). Com ele preenchido, o script funciona tanto criado de
+// dentro da planilha quanto como projeto separado em script.google.com.
+var ID_PLANILHA = '1EOTolgwtMJWVCW5DDzk91XvXXjG2dY0_16PrqWP0ClQ';
 
 // Aba onde as candidaturas são gravadas. Criada sozinha se não existir.
 var ABA = 'Candidaturas';
@@ -199,4 +199,86 @@ function testarGravacao() {
     }
   });
   console.log(resposta.getContent());
+}
+
+/* ---------- VISUAL DA PLANILHA ---------- */
+
+// Rode esta função pelo editor para (re)aplicar o visual na aba Candidaturas.
+// Pode rodar quantas vezes quiser: não apaga nenhuma resposta.
+function formatarPlanilha() {
+  var planilha = ID_PLANILHA
+    ? SpreadsheetApp.openById(ID_PLANILHA)
+    : SpreadsheetApp.getActiveSpreadsheet();
+
+  var aba = planilha.getSheetByName(ABA);
+  if (!aba) {
+    var primeira = planilha.getSheets()[0];
+    if (primeira.getLastRow() === 0) { primeira.setName(ABA); aba = primeira; }
+    else aba = planilha.insertSheet(ABA);
+  }
+
+  var cabecalho = ['Data/Hora'].concat(CAMPOS.map(function (c) { return c[1]; }));
+  var n = cabecalho.length;
+
+  // Cabeçalho (só escreve se a linha 1 estiver vazia)
+  if (aba.getLastRow() === 0 || !aba.getRange(1, 1).getValue()) {
+    aba.getRange(1, 1, 1, n).setValues([cabecalho]);
+  }
+
+  // Remove colunas sobrando à direita
+  if (aba.getMaxColumns() > n) aba.deleteColumns(n + 1, aba.getMaxColumns() - n);
+
+  var todas = aba.getRange(1, 1, aba.getMaxRows(), n);
+  todas.setFontFamily('Inter').setFontSize(10).setFontColor('#0a0a0b')
+       .setVerticalAlignment('top').setHorizontalAlignment('left')
+       .setWrap(true);
+
+  // Cabeçalho
+  aba.getRange(1, 1, 1, n)
+     .setBackground('#0a0a0b').setFontColor('#f6f6f4').setFontWeight('bold')
+     .setFontSize(10).setVerticalAlignment('middle').setWrap(true);
+  aba.setRowHeight(1, 48);
+  aba.setFrozenRows(1);
+  aba.setFrozenColumns(2);
+  aba.setHiddenGridlines(true);
+  aba.setTabColor('#0a0a0b');
+
+  // Linhas alternadas
+  aba.getBandings().forEach(function (b) { b.remove(); });
+  aba.getRange(1, 1, aba.getMaxRows(), n)
+     .applyRowBanding(SpreadsheetApp.BandingTheme.LIGHT_GREY, true, false)
+     .setHeaderRowColor('#0a0a0b').setFirstRowColor('#ffffff').setSecondRowColor('#f6f6f4');
+
+  // Larguras
+  var larguras = [140, 210, 60, 150, 130, 170, 170, 90, 170, 170, 120,
+                  170, 170, 110, 170, 170, 110, 110, 220, 110, 220, 110, 220,
+                  220, 180, 140, 140, 420];
+  larguras.slice(0, n).forEach(function (w, i) { aba.setColumnWidth(i + 1, w); });
+
+  // Formatos
+  aba.getRange(2, 1, aba.getMaxRows() - 1, 1).setNumberFormat('dd/MM/yyyy HH:mm');
+  aba.getRange(2, 3, aba.getMaxRows() - 1, 1).setHorizontalAlignment('center'); // idade
+  aba.getRange(2, 8, aba.getMaxRows() - 1, 1).setHorizontalAlignment('center'); // ano
+  aba.getRange(2, 2, aba.getMaxRows() - 1, 1).setFontWeight('bold');            // nome
+
+  // Sim / Não com cor
+  [18, 20, 22].forEach(function (col) {
+    var faixa = aba.getRange(2, col, aba.getMaxRows() - 1, 1);
+    faixa.setHorizontalAlignment('center').setFontWeight('bold');
+  });
+  var regras = aba.getConditionalFormatRules().filter(function () { return false; });
+  [18, 20, 22].forEach(function (col) {
+    var faixa = aba.getRange(2, col, aba.getMaxRows() - 1, 1);
+    regras.push(SpreadsheetApp.newConditionalFormatRule()
+      .whenTextEqualTo('Sim').setBackground('#dff3e6').setFontColor('#1f9d55').setRanges([faixa]).build());
+    regras.push(SpreadsheetApp.newConditionalFormatRule()
+      .whenTextEqualTo('Não').setBackground('#eeeeec').setFontColor('#55555a').setRanges([faixa]).build());
+  });
+  aba.setConditionalFormatRules(regras);
+
+  // Bordas finas e filtro
+  aba.getRange(1, 1, aba.getMaxRows(), n)
+     .setBorder(null, null, null, null, true, true, '#dcdcda', SpreadsheetApp.BorderStyle.SOLID);
+  if (aba.getFilter()) aba.getFilter().remove();
+  aba.getRange(1, 1, Math.max(aba.getLastRow(), 2), n).createFilter();
 }
