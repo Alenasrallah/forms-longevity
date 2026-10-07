@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="only light">
+<title>Candidatura · Instituto Longevity</title>
+<meta name="description" content="Formulário de candidatura para a vaga no Instituto Longevity.">
+<link rel="icon" type="image/png" sizes="64x64" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<style>
+  /* ================= Design system do app =================
+     Trechos copiados sem alteração de longevity-app-anterior.html
+     (documentados em ../design-system.html): tokens, base, botões,
+     chips, onboarding, perguntas e campos. Só o tema claro: o formulário
+     não tem modo escuro, nem pelo sistema do aparelho. */
+  @font-face { font-family: "SFRounded"; src: local("SF Pro Display"), local("SF Pro Text"); }
+  :root {
+    --bg: #f6f6f4; --bg-panel: #ffffff; --bg-sunk: #eeeeec;
+    --ink: #0a0a0b; --ink-soft: #55555a; --ink-faint: #9a9a9e; --line: #dcdcda;
+    --good: #1f9d55; --warn: #b8862c; --crit: #c23b3b;
+    --shadow: 0 1px 2px rgba(10,10,11,0.04), 0 12px 32px -16px rgba(10,10,11,0.18);
+    --radius-lg: 28px; --radius-md: 18px; --radius-sm: 10px;
+    --nav-w: 220px;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  }
+  /* "only light" também impede o escurecimento automático de navegadores no celular. */
+  :root { color-scheme: only light; }
+
+  * { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--ink); }
+  body { font-family: "SFRounded", -apple-system, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; transition: background 300ms ease, color 300ms ease; }
+  a { color: inherit; }
+  button { font-family: inherit; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  @keyframes viewIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .btn { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; letter-spacing: -0.005em; padding: 10px 18px; border-radius: 999px; border: none; cursor: pointer; transition: transform 160ms var(--ease-out), opacity 160ms ease; }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn:disabled:active { transform: none; }
+  .btn-primary { background: var(--ink); color: var(--bg); }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-ghost { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); }
+  .btn-ghost:hover { color: var(--ink); border-color: var(--ink-faint); }
+  .btn-sm { padding: 7px 14px; font-size: 12.5px; }
+  /* ================= chips ================= */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font-size: 12.5px; font-weight: 500; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg-panel); color: var(--ink-soft); cursor: pointer; transition: background 160ms ease, color 160ms ease, border-color 160ms ease, transform 160ms var(--ease-out); }
+  .chip:active { transform: scale(0.96); }
+  .chip.on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  /* ================= Onboarding ================= */
+  .onb-shell { min-height: 100vh; display: flex; flex-direction: column; }
+  .onb-topbar { display: flex; align-items: center; justify-content: space-between; padding: 28px 40px; }
+  .onb-steps { display: flex; gap: 6px; }
+  .onb-dot { width: 22px; height: 3px; border-radius: 2px; background: var(--line); transition: background 240ms ease, width 240ms ease; }
+  .onb-dot.done { background: var(--ink-faint); }
+  .onb-dot.active { background: var(--ink); width: 34px; }
+  .onb-body { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px 40px 60px; }
+  .onb-step { display: none; max-width: 600px; width: 100%; text-align: center; }
+  .onb-step.active { display: block; animation: viewIn 420ms var(--ease-out); }
+  .onb-kicker { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 14px; }
+  .onb-title { font-size: clamp(26px, 3.6vw, 40px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; margin: 0 0 16px; text-wrap: balance; }
+  .onb-copy { font-size: 15px; line-height: 1.6; color: var(--ink-soft); max-width: 46ch; margin: 0 auto 32px; }
+  .onb-actions { display: flex; gap: 12px; justify-content: center; }
+  .q-block { text-align: left; margin-bottom: 24px; }
+  .q-title { font-size: 14.5px; font-weight: 600; margin-bottom: 12px; }
+  .q-hint { font-size: 12px; color: var(--ink-faint); margin-top: -6px; margin-bottom: 12px; }
+  .scale-row { display: flex; gap: 8px; }
+  .scale-opt { flex: 1; padding: 12px 0; text-align: center; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--bg-panel); font-size: 13px; font-weight: 500; color: var(--ink-soft); cursor: pointer; transition: background 160ms ease, color 160ms ease, border-color 160ms ease, transform 160ms var(--ease-out); }
+  .scale-opt:active { transform: scale(0.96); }
+  .scale-opt.on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  .field-detail { margin-top: 10px; max-height: 0; overflow: hidden; opacity: 0; transition: max-height 260ms var(--ease-out), opacity 200ms ease, margin-top 260ms var(--ease-out); }
+  .field-detail.open { max-height: 120px; opacity: 1; }
+  .field-input { width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--bg-panel); color: var(--ink); font-size: 13.5px; font-family: inherit; resize: none; transition: border-color 160ms ease; }
+  .field-input:focus { border-color: var(--ink); }
+  .field-input::placeholder { color: var(--ink-faint); }
+  .note { padding: 22px 24px; border-radius: var(--radius-md); background: var(--bg-sunk); border: 1px solid var(--line); font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
+  .note b { color: var(--ink); font-weight: 600; }
+  .trait-label { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); margin-bottom: 8px; }
+
+  /* ================= Formulário: o que o design system não cobre ================= */
+  /* No app os rótulos são <div>; aqui são <label>, então precisam virar bloco. */
+  label.q-title, label.trait-label { display: block; }
+  .field + .field, .chips + .field { margin-top: 14px; }
+
+  /* Estado de erro: o app não tem um. Usa --crit, o mesmo token das pílulas de status. */
+  .field-input[aria-invalid="true"], .scale-row[aria-invalid="true"] .scale-opt { border-color: var(--crit); }
+  .field-error { font-size: 12px; color: var(--crit); margin: 8px 0 0; text-align: left; }
+  #erro-envio { margin-bottom: 20px; text-align: left; }
+  #erro-envio b { color: var(--crit); }
+  .consent { font-size: 12px; line-height: 1.5; color: var(--ink-faint); text-align: left; margin: 0 0 24px; }
+
+  /* Logo do Instituto Longevity: só o texto no topo (legível em 28px), a marca completa na abertura. */
+  .brand-logo { display: block; height: 28px; width: auto; }
+  .welcome-logo { display: block; width: 132px; height: auto; margin: 0 auto 36px; }
+
+  /* Campo isca para robôs: fora da tela, nunca visível. */
+  .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .onb-step.active { animation: none; }
+    .field-detail { transition: none; }
+  }
+  /* Mesmo respiro lateral de 20px que o app usa nas páginas até 620px. */
+  @media (max-width: 620px) {
+    .onb-topbar { padding: 20px; }
+    .onb-body { padding: 8px 20px 48px; }
+    .onb-dot { width: 14px; }
+    .onb-dot.active { width: 24px; }
+    .brand-logo { height: 22px; }
+    .welcome-logo { width: 108px; margin-bottom: 28px; }
+  }
+</style>
+</head>
+<body>
+<form class="onb-shell" id="candidatura" data-endpoint="" novalidate>
+  <div class="onb-topbar">
+    <img class="brand-logo" src="assets/logo-instituto-longevity-texto.png" alt="Instituto Longevity" width="394" height="97">
+    <div class="onb-steps" id="onb-steps" aria-hidden="true"></div>
+  </div>
+
+  <div class="onb-body">
+
+    <!-- ---------- 0 · Boas-vindas ---------- -->
+    <section class="onb-step active" data-step="0" aria-labelledby="t0">
+      <img class="welcome-logo" src="assets/logo-instituto-longevity.png" alt="" width="412" height="378">
+      <p class="onb-kicker">Processo seletivo</p>
+      <h1 class="onb-title" id="t0">Queremos conhecer você.</h1>
+      <p class="onb-copy">São 10 perguntas sobre sua formação, sua experiência e o que você traria para a clínica. Leva uns 10 minutos, e dá para voltar e corrigir antes de enviar.</p>
+      <div class="onb-actions"><button class="btn btn-primary" type="submit">Começar</button></div>
+    </section>
+
+    <!-- ---------- 1 · Sobre você ---------- -->
+    <section class="onb-step" data-step="1" aria-labelledby="t1">
+      <p class="onb-kicker">Passo 1 de 6</p>
+      <h1 class="onb-title" id="t1">Sobre você</h1>
+      <p class="onb-copy">Para começar, o básico. As respostas ficam só com a equipe da clínica.</p>
+      <div class="q-block" role="group" aria-labelledby="q1">
+        <div class="q-title" id="q1">Nome completo, idade e bairro ou cidade onde mora.</div>
+        <div class="field"><label class="trait-label" for="nome">Nome completo</label><input class="field-input" id="nome" name="nome" type="text" autocomplete="name" maxlength="120" required></div>
+        <div class="field"><label class="trait-label" for="idade">Idade</label><input class="field-input" id="idade" name="idade" type="text" inputmode="numeric" maxlength="2" data-kind="idade" required></div>
+        <div class="field"><label class="trait-label" for="cidade">Bairro ou cidade</label><input class="field-input" id="cidade" name="cidade" type="text" autocomplete="address-level2" maxlength="120" required></div>
+      </div>
+      <div class="q-block">
+        <label class="q-title" for="whatsapp">Qual é o seu WhatsApp, com DDD?</label>
+        <div class="q-hint">É por onde a clínica fala com você se o seu perfil seguir no processo.</div>
+        <input class="field-input" id="whatsapp" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="(11) 90000-0000" data-kind="whatsapp" required>
+      </div>
+      <div class="onb-actions"><button class="btn btn-ghost" type="button" data-back>Voltar</button><button class="btn btn-primary" type="submit">Continuar</button></div>
+    </section>
+
+    <!-- ---------- 2 · Formação e trabalho atual ---------- -->
+    <section class="onb-step" data-step="2" aria-labelledby="t2">
+      <p class="onb-kicker">Passo 2 de 6</p>
+      <h1 class="onb-title" id="t2">Formação e trabalho atual</h1>
+      <p class="onb-copy">De onde você vem e onde está agora.</p>
+      <div class="q-block" role="group" aria-labelledby="q2">
+        <div class="q-title" id="q2">Qual é a sua formação? Curso, instituição e ano de conclusão.</div>
+        <div class="field"><label class="trait-label" for="curso">Curso</label><input class="field-input" id="curso" name="curso" type="text" maxlength="150" required></div>
+        <div class="field"><label class="trait-label" for="instituicao">Instituição</label><input class="field-input" id="instituicao" name="instituicao" type="text" maxlength="150" required></div>
+        <div class="field"><label class="trait-label" for="ano_conclusao">Ano de conclusão</label><input class="field-input" id="ano_conclusao" name="ano_conclusao" type="text" maxlength="30" placeholder="Ex.: 2019, ou cursando" required></div>
+      </div>
+      <div class="q-block" role="group" aria-labelledby="q3">
+        <div class="q-title" id="q3">Onde você trabalha hoje (ou trabalhou por último), qual é o cargo e há quanto tempo?</div>
+        <div class="field"><label class="trait-label" for="empresa_atual">Empresa</label><input class="field-input" id="empresa_atual" name="empresa_atual" type="text" maxlength="150" required></div>
+        <div class="field"><label class="trait-label" for="cargo_atual">Cargo</label><input class="field-input" id="cargo_atual" name="cargo_atual" type="text" maxlength="150" required></div>
+        <div class="field"><label class="trait-label" for="tempo_atual">Há quanto tempo</label><input class="field-input" id="tempo_atual" name="tempo_atual" type="text" maxlength="60" placeholder="Ex.: 2 anos e 3 meses" required></div>
+      </div>
+      <div class="onb-actions"><button class="btn btn-ghost" type="button" data-back>Voltar</button><button class="btn btn-primary" type="submit">Continuar</button></div>
+    </section>
+
+    <!-- ---------- 3 · Experiências anteriores ---------- -->
+    <section class="onb-step" data-step="3" aria-labelledby="t3">
+      <p class="onb-kicker">Passo 3 de 6</p>
+      <h1 class="onb-title" id="t3">Experiências anteriores</h1>
+      <p class="onb-copy">Conte suas duas experiências anteriores mais importantes: empresa, cargo e tempo em cada uma.</p>
+      <div class="q-block" role="group" aria-labelledby="q4a">
+        <div class="q-title" id="q4a">Experiência 1</div>
+        <div class="field"><label class="trait-label" for="exp1_empresa">Empresa</label><input class="field-input" id="exp1_empresa" name="exp1_empresa" type="text" maxlength="150" required></div>
+        <div class="field"><label class="trait-label" for="exp1_cargo">Cargo</label><input class="field-input" id="exp1_cargo" name="exp1_cargo" type="text" maxlength="150" required></div>
+        <div class="field"><label class="trait-label" for="exp1_tempo">Tempo</label><input class="field-input" id="exp1_tempo" name="exp1_tempo" type="text" maxlength="60" placeholder="Ex.: 1 ano e meio" required></div>
+      </div>
+      <div class="q-block" role="group" aria-labelledby="q4b">
+        <div class="q-title" id="q4b">Experiência 2</div>
+        <div class="q-hint">Se tiver só uma, pode deixar em branco.</div>
+        <div class="field"><label class="trait-label" for="exp2_empresa">Empresa</label><input class="field-input" id="exp2_empresa" name="exp2_empresa" type="text" maxlength="150"></div>
+        <div class="field"><label class="trait-label" for="exp2_cargo">Cargo</label><input class="field-input" id="exp2_cargo" name="exp2_cargo" type="text" maxlength="150"></div>
+        <div class="field"><label class="trait-label" for="exp2_tempo">Tempo</label><input class="field-input" id="exp2_tempo" name="exp2_tempo" type="text" maxlength="60"></div>
+      </div>
+      <div class="onb-actions"><button class="btn btn-ghost" type="button" data-back>Voltar</button><button class="btn btn-primary" type="submit">Continuar</button></div>
+    </section>
+
+    <!-- ---------- 4 · Saúde, vendas e equipe ---------- -->
+    <section class="onb-step" data-step="4" aria-labelledby="t4">
+      <p class="onb-kicker">Passo 4 de 6</p>
+      <h1 class="onb-title" id="t4">Saúde, vendas e equipe</h1>
+      <p class="onb-copy">Três experiências que pesam nesta vaga. Se a resposta for sim, conte um pouco mais.</p>
+      <div class="q-block">
+        <div class="q-title" id="q5">Você já trabalhou na área da saúde ou clínica?</div>
+        <div class="scale-row" role="group" aria-labelledby="q5" data-name="saude" data-detail="saude-detalhe" data-required><button class="scale-opt" type="button" data-v="Não" aria-pressed="false">Não</button><button class="scale-opt" type="button" data-v="Sim" aria-pressed="false">Sim</button></div>
+        <input type="hidden" name="saude">
+        <div class="field-detail" id="saude-detalhe"><textarea class="field-input" id="saude_detalhe" name="saude_detalhe" rows="2" maxlength="1500" placeholder="Onde, e fazendo o quê" aria-label="Onde você trabalhou na área da saúde, e fazendo o quê" data-required-if="saude"></textarea></div>
+      </div>
+      <div class="q-block">
+        <div class="q-title" id="q6">Você já teve experiência com vendas ou atendimento comercial?</div>
+        <div class="scale-row" role="group" aria-labelledby="q6" data-name="vendas" data-detail="vendas-detalhe" data-required><button class="scale-opt" type="button" data-v="Não" aria-pressed="false">Não</button><button class="scale-opt" type="button" data-v="Sim" aria-pressed="false">Sim</button></div>
+        <input type="hidden" name="vendas">
+        <div class="field-detail" id="vendas-detalhe"><textarea class="field-input" id="vendas_detalhe" name="vendas_detalhe" rows="2" maxlength="1500" placeholder="Conte rapidamente como foi" aria-label="Conte rapidamente sua experiência com vendas" data-required-if="vendas"></textarea></div>
+      </div>
+      <div class="q-block">
+        <div class="q-title" id="q7">Você já coordenou pessoas ou foi responsável pela rotina de uma equipe?</div>
+        <div class="scale-row" role="group" aria-labelledby="q7" data-name="coordenacao" data-detail="coordenacao-detalhe" data-required><button class="scale-opt" type="button" data-v="Não" aria-pressed="false">Não</button><button class="scale-opt" type="button" data-v="Sim" aria-pressed="false">Sim</button></div>
+        <input type="hidden" name="coordenacao">
+        <div class="field-detail" id="coordenacao-detalhe"><textarea class="field-input" id="coordenacao_detalhe" name="coordenacao_detalhe" rows="2" maxlength="1500" placeholder="Quantas pessoas, e por quanto tempo" aria-label="Quantas pessoas você coordenou, e por quanto tempo" data-required-if="coordenacao"></textarea></div>
+      </div>
+      <div class="onb-actions"><button class="btn btn-ghost" type="button" data-back>Voltar</button><button class="btn btn-primary" type="submit">Continuar</button></div>
+    </section>
+
+    <!-- ---------- 5 · Ferramentas e condições ---------- -->
+    <section class="onb-step" data-step="5" aria-labelledby="t5">
+      <p class="onb-kicker">Passo 5 de 6</p>
+      <h1 class="onb-title" id="t5">Ferramentas e condições</h1>
+      <p class="onb-copy">O que você já domina no dia a dia, e o que precisa para começar.</p>
+      <div class="q-block">
+        <div class="q-title" id="q8">Quais sistemas e ferramentas você usa bem?</div>
+        <div class="q-hint">Marque quantos quiser.</div>
+        <div class="chips" role="group" aria-labelledby="q8">
+          <button class="chip" type="button" data-v="Excel ou Planilhas" aria-pressed="false">Excel ou Planilhas</button>
+          <button class="chip" type="button" data-v="CRM" aria-pressed="false">CRM</button>
+          <button class="chip" type="button" data-v="Sistema de agenda" aria-pressed="false">Sistema de agenda</button>
+          <button class="chip" type="button" data-v="WhatsApp Business" aria-pressed="false">WhatsApp Business</button>
+        </div>
+        <div class="field"><label class="trait-label" for="ferramentas_outras">Outros sistemas</label><input class="field-input" id="ferramentas_outras" name="ferramentas_outras" type="text" maxlength="300" placeholder="Ex.: Google Agenda, Canva, sistema de prontuário"></div>
+      </div>
+      <div class="q-block" role="group" aria-labelledby="q9">
+        <div class="q-title" id="q9">Qual é a sua pretensão salarial e quando você poderia começar?</div>
+        <div class="field"><label class="trait-label" for="pretensao">Pretensão salarial</label><input class="field-input" id="pretensao" name="pretensao" type="text" maxlength="60" placeholder="Ex.: R$ 3.500 por mês" required></div>
+        <div class="field">
+          <div class="trait-label" id="inicio-label">Quando poderia começar</div>
+          <div class="scale-row" role="group" aria-labelledby="inicio-label" data-name="inicio" data-required><button class="scale-opt" type="button" data-v="Imediato" aria-pressed="false">Imediato</button><button class="scale-opt" type="button" data-v="Em 15 dias" aria-pressed="false">Em 15 dias</button><button class="scale-opt" type="button" data-v="Em 30 dias" aria-pressed="false">Em 30 dias</button><button class="scale-opt" type="button" data-v="Mais de 30 dias" aria-pressed="false">Mais de 30 dias</button></div>
+          <input type="hidden" name="inicio">
+        </div>
+      </div>
+      <div class="onb-actions"><button class="btn btn-ghost" type="button" data-back>Voltar</button><button class="btn btn-primary" type="submit">Continuar</button></div>
+    </section>
+
+    <!-- ---------- 6 · Por que você ---------- -->
+    <section class="onb-step" data-step="6" aria-labelledby="t6">
+      <p class="onb-kicker">Passo 6 de 6</p>
+      <h1 class="onb-title" id="t6">Por que você</h1>
+      <p class="onb-copy">A última pergunta, e a mais importante para a clínica.</p>
+      <div class="q-block">
+        <label class="q-title" for="motivacao">Por que você quer essa vaga e o que você traria para a clínica?</label>
+        <div class="q-hint">Responda em poucas linhas.</div>
+        <textarea class="field-input" id="motivacao" name="motivacao" rows="5" maxlength="1500" required></textarea>
+      </div>
+      <p class="consent">Ao enviar, você autoriza a clínica a usar estas respostas apenas neste processo seletivo.</p>
+      <div class="note" id="erro-envio" role="alert" hidden></div>
+      <div class="hp" aria-hidden="true"><label for="empresa_fax">Não preencha este campo</label><input id="empresa_fax" name="empresa_fax" type="text" tabindex="-1" autocomplete="off"></div>
+      <div class="onb-actions"><button class="btn btn-ghost" type="button" data-back>Voltar</button><button class="btn btn-primary" type="submit" id="btn-enviar">Enviar candidatura</button></div>
+    </section>
+
+    <!-- ---------- 7 · Pronto ---------- -->
+    <section class="onb-step" data-step="7" aria-labelledby="t7">
+      <p class="onb-kicker">Pronto</p>
+      <h1 class="onb-title" id="t7">Recebemos sua candidatura.</h1>
+      <p class="onb-copy">Obrigado pelo tempo e pelo cuidado nas respostas. Se o seu perfil seguir no processo, a clínica fala com você pelo WhatsApp que você informou.</p>
+    </section>
+
+  </div>
+</form>
+
+<script>
+  /* ---------- configuração ----------
+     A URL do Apps Script (termina em /exec) vai no atributo data-endpoint do <form>.
+     Passo a passo no LEIA-ME.md desta pasta. */
+  const form = document.getElementById('candidatura');
+  const steps = [...form.querySelectorAll('.onb-step')];
+  const DONE = steps.length - 1;
+  const LAST_QUESTION = DONE - 1;
+  const SUBMIT_LABEL = 'Enviar candidatura';
+  const MESSAGES = {
+    required: 'Preencha este campo.',
+    choice: 'Escolha uma opção.',
+    idade: 'Informe uma idade entre 16 e 80 anos.',
+    whatsapp: 'Informe o WhatsApp com DDD.',
+  };
+  let current = 0;
+  let sending = false;
+
+  /* ---------- passos (mesma lógica do onboarding do app) ---------- */
+  const dotsWrap = document.getElementById('onb-steps');
+  steps.forEach(() => dotsWrap.appendChild(document.createElement('div')));
+  function renderDots() {
+    [...dotsWrap.children].forEach((d, i) => {
+      d.className = 'onb-dot' + (i < current ? ' done' : i === current ? ' active' : '');
+    });
+  }
+  function showStep(i) {
+    steps[current].classList.remove('active');
+    current = i;
+    steps[current].classList.add('active');
+    renderDots();
+    window.scrollTo({ top: 0 });
+    const heading = steps[current].querySelector('.onb-title');
+    heading.setAttribute('tabindex', '-1');
+    heading.focus({ preventScroll: true });
+  }
+  renderDots();
+
+  /* ---------- escolhas: escala Sim/Não e chips ---------- */
+  form.querySelectorAll('.scale-row[data-name]').forEach(row => {
+    const input = form.elements[row.dataset.name];
+    const detail = row.dataset.detail ? document.getElementById(row.dataset.detail) : null;
+    if (detail) detail.inert = true;
+    row.querySelectorAll('.scale-opt').forEach(opt => {
+      opt.addEventListener('click', () => {
+        row.querySelectorAll('.scale-opt').forEach(o => {
+          o.classList.toggle('on', o === opt);
+          o.setAttribute('aria-pressed', String(o === opt));
+        });
+        input.value = opt.dataset.v;
+        setError(row, '');
+        if (!detail) return;
+        const open = opt.dataset.v === 'Sim';
+        detail.classList.toggle('open', open);
+        detail.inert = !open;
+        if (!open) detail.querySelectorAll('.field-input').forEach(f => setError(f, ''));
+      });
+    });
+  });
+  form.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.setAttribute('aria-pressed', String(chip.classList.toggle('on')));
+    });
+  });
+
+  /* ---------- validação ---------- */
+  function fieldError(el) {
+    const value = el.value.trim();
+    const condition = el.dataset.requiredIf;
+    const required = el.required || (condition && form.elements[condition].value === 'Sim');
+    if (!value) return required ? MESSAGES.required : '';
+    if (el.dataset.kind === 'idade') {
+      const age = Number(value);
+      if (!Number.isInteger(age) || age < 16 || age > 80) return MESSAGES.idade;
+    }
+    if (el.dataset.kind === 'whatsapp' && value.replace(/\D/g, '').length < 10) return MESSAGES.whatsapp;
+    return '';
+  }
+  function setError(el, message) {
+    let slot = el.nextElementSibling;
+    if (!slot || !slot.classList.contains('field-error')) {
+      if (!message) return;
+      slot = document.createElement('p');
+      slot.className = 'field-error';
+      slot.id = (el.id || el.dataset.name) + '-erro';
+      el.after(slot);
+    }
+    slot.textContent = message;
+    slot.hidden = !message;
+    el.setAttribute('aria-invalid', message ? 'true' : 'false');
+    if (message) el.setAttribute('aria-describedby', slot.id);
+    else el.removeAttribute('aria-describedby');
+  }
+  function validateStep(step) {
+    let firstInvalid = null;
+    step.querySelectorAll('.field-input, .scale-row[data-required]').forEach(el => {
+      const isChoice = el.classList.contains('scale-row');
+      const message = isChoice
+        ? (form.elements[el.dataset.name].value ? '' : MESSAGES.choice)
+        : fieldError(el);
+      setError(el, message);
+      if (message && !firstInvalid) firstInvalid = isChoice ? el.querySelector('.scale-opt') : el;
+    });
+    if (firstInvalid) firstInvalid.focus();
+    return !firstInvalid;
+  }
+  // Depois do primeiro erro, o campo volta a ser checado a cada digitação.
+  form.addEventListener('input', e => {
+    const el = e.target;
+    if (el.classList.contains('field-input') && el.getAttribute('aria-invalid') === 'true') setError(el, fieldError(el));
+  });
+
+  /* ---------- envio para a planilha ---------- */
+  function buildPayload() {
+    const data = {};
+    new FormData(form).forEach((value, key) => { data[key] = String(value).trim(); });
+    data.ferramentas = [...form.querySelectorAll('.chip.on')].map(c => c.dataset.v).join(', ');
+    // Detalhe só vale quando a resposta foi "Sim".
+    form.querySelectorAll('.scale-row[data-detail]').forEach(row => {
+      if (data[row.dataset.name] === 'Sim') return;
+      document.getElementById(row.dataset.detail).querySelectorAll('[name]').forEach(f => { data[f.name] = ''; });
+    });
+    return data;
+  }
+  async function postToSheet(endpoint, data) {
+    // text/plain evita o preflight de CORS, que o Apps Script não responde.
+    const options = { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) };
+    let response;
+    try {
+      response = await fetch(endpoint, { ...options, redirect: 'follow' });
+    } catch (unreadable) {
+      // Se o navegador barrar a leitura da resposta, reenviamos em no-cors:
+      // a linha chega na planilha, só não dá para ler a confirmação.
+      await fetch(endpoint, { ...options, mode: 'no-cors' });
+      return;
+    }
+    const result = await response.json();
+    if (!result.ok) throw new Error(result.erro || 'Falha ao gravar');
+  }
+  function showSendError(message) {
+    const box = document.getElementById('erro-envio');
+    box.innerHTML = '';
+    const strong = document.createElement('b');
+    strong.textContent = 'Não foi enviado. ';
+    box.append(strong, message);
+    box.hidden = false;
+  }
+  async function send() {
+    const endpoint = form.dataset.endpoint;
+    const button = document.getElementById('btn-enviar');
+    document.getElementById('erro-envio').hidden = true;
+    if (!endpoint) {
+      showSendError('Este formulário ainda não está ligado à planilha. Avise a clínica.');
+      return;
+    }
+    sending = true;
+    button.disabled = true;
+    button.textContent = 'Enviando…';
+    try {
+      await postToSheet(endpoint, buildPayload());
+      showStep(DONE);
+    } catch (err) {
+      showSendError('Confira sua internet e tente de novo. Suas respostas continuam aqui.');
+    } finally {
+      sending = false;
+      button.disabled = false;
+      button.textContent = SUBMIT_LABEL;
+    }
+  }
+
+  /* ---------- navegação ---------- */
+  // Continuar e Enviar são type="submit", então Enter num campo também avança.
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    if (sending || current === DONE) return;
+    if (!validateStep(steps[current])) return;
+    if (current === LAST_QUESTION) send();
+    else showStep(current + 1);
+  });
+  form.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => showStep(current - 1)));
+</script>
+</body>
+</html>
