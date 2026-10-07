@@ -34,13 +34,19 @@ testes avisam se os dois ficarem diferentes).
 
 ## Falta 1 coisa para ir ao ar: ligar a planilha
 
-Faça logado na conta Google da clínica. O script roda como quem implanta e
-precisa poder editar a planilha.
+A planilha **já existe** e o `ID_PLANILHA` já está preenchido no `Codigo.gs`:
+`1EOTolgwtMJWVCW5DDzk91XvXXjG2dY0_16PrqWP0ClQ`. Ela é privada; manter assim,
+porque as respostas têm dados pessoais dos candidatos.
 
-1. Crie uma planilha nova no Google Sheets, por exemplo
-   **Candidaturas · Instituto Longevity**.
-2. Na planilha, vá em **Extensões → Apps Script**. Apague o conteúdo do
-   `Código.gs` e cole tudo o que está em `apps-script/Codigo.gs`. Salve (Ctrl+S).
+Faça logado na conta Google dona da planilha, de preferência numa janela
+anônima ou num perfil do Chrome só com essa conta (várias contas Google
+logadas no mesmo navegador costumam quebrar a autorização e a implantação).
+O script roda como quem implanta e precisa poder editar a planilha.
+
+1. Abra a planilha.
+2. Vá em **Extensões → Apps Script**. Apague o conteúdo do `Código.gs` e cole
+   tudo o que está em `apps-script/Codigo.gs`. Salve (Ctrl+S). Com o ID
+   preenchido, um projeto separado em script.google.com também funciona.
 3. Opcional: preencha `AVISAR` com os e-mails que devem receber um aviso a
    cada candidatura nova. Ex.: `var AVISAR = ['rh@suaclinica.com.br'];`
 4. Rode a função `testarGravacao` uma vez e autorize o acesso quando o Google
