@@ -110,8 +110,13 @@ em São Paulo.
   texto, para ninguém injetar fórmula. Cada resposta é cortada em 2.000
   caracteres.
 - **CORS:** o Apps Script não responde ao preflight, então o envio vai como
-  `text/plain`. Se o navegador barrar a leitura da resposta, a página reenvia
-  em `no-cors` e a linha chega do mesmo jeito.
+  `text/plain`. A página só mostra "Recebemos sua candidatura" quando a
+  planilha responde `{ ok: true }`. Não existe reenvio em `no-cors`: ele
+  escondia recusas do Google (implantação sem acesso público, por exemplo) e
+  o candidato achava que tinha enviado sem nada chegar na planilha.
+- **Implantação:** "Quem pode acessar" precisa ser **Qualquer pessoa**. Com
+  "Somente eu" ou "Qualquer pessoa com Conta do Google", o Google pede login
+  e o envio volta com erro 401.
 - **Concorrência:** `LockService` evita que dois envios simultâneos escrevam
   na mesma linha.
 - **Testes:** `node --test formulario/tests/codigo.test.mjs` (rodar na pasta Sistema-Longevity).

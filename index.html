@@ -116,7 +116,7 @@
 </style>
 </head>
 <body>
-<form class="onb-shell" id="candidatura" data-endpoint="" novalidate>
+<form class="onb-shell" id="candidatura" data-endpoint="https://script.google.com/macros/s/AKfycbynVrykzHuCxhOQRIIn9rKAMnLN13cYO2iDF2hIrnBQEIvdqro_TLD2bT9jdcR9xKjgdA/exec" novalidate>
   <div class="onb-topbar">
     <img class="brand-logo" src="assets/logo-instituto-longevity-texto.png" alt="Instituto Longevity" width="394" height="97">
     <div class="onb-steps" id="onb-steps" aria-hidden="true"></div>
@@ -399,16 +399,15 @@
   }
   async function postToSheet(endpoint, data) {
     // text/plain evita o preflight de CORS, que o Apps Script não responde.
-    const options = { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) };
-    let response;
-    try {
-      response = await fetch(endpoint, { ...options, redirect: 'follow' });
-    } catch (unreadable) {
-      // Se o navegador barrar a leitura da resposta, reenviamos em no-cors:
-      // a linha chega na planilha, só não dá para ler a confirmação.
-      await fetch(endpoint, { ...options, mode: 'no-cors' });
-      return;
-    }
+    // Só conta como enviado quando a planilha confirma com { ok: true }. Não há
+    // reenvio em no-cors: ele "confirmava" envios que o Google recusou (por
+    // exemplo, implantação sem acesso público) e a candidatura se perdia calada.
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(data),
+      redirect: 'follow',
+    });
     const result = await response.json();
     if (!result.ok) throw new Error(result.erro || 'Falha ao gravar');
   }
@@ -435,7 +434,7 @@
       await postToSheet(endpoint, buildPayload());
       showStep(DONE);
     } catch (err) {
-      showSendError('Confira sua internet e tente de novo. Suas respostas continuam aqui.');
+      showSendError('Tente de novo em alguns instantes. Suas respostas continuam aqui. Se o erro continuar, avise a clínica.');
     } finally {
       sending = false;
       button.disabled = false;
